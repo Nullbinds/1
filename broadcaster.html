@@ -1,0 +1,22 @@
+<!-- broadcaster.html -->
+<video id="preview" hidden></video>
+<canvas id="cropCanvas" hidden></canvas>
+
+<script>
+  const video = document.getElementById('preview');
+  const canvas = document.getElementById('cropCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Starta skärminspelning
+  async function startCapture() {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+    video.srcObject = stream;
+
+    // Beskär till en region (t.ex. 800x600)
+    setInterval(() => {
+      ctx.drawImage(video, 0, 0, 800, 600, 0, 0, 800, 600);
+    }, 30);
+  }
+
+  startCapture();
+</script>
