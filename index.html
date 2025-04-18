@@ -1,0 +1,25 @@
+<!-- index.html på GitHub Pages -->
+<video id="remoteVideo" autoplay></video>
+
+<script>
+  const ws = new WebSocket('wss://din-signalerings-server.com');
+  const video = document.getElementById('remoteVideo');
+
+  // Anslut till WebRTC
+  const peer = new RTCPeerConnection();
+
+  peer.ontrack = (event) => {
+    video.srcObject = event.streams[0];
+  };
+
+  // Hantera signaler från servern
+  ws.onmessage = async (event) => {
+    const data = JSON.parse(event.data);
+    if (data.offer) {
+      await peer.setRemoteDescription(data.offer);
+      const answer = await peer.createAnswer();
+      await peer.setLocalDescription(answer);
+      ws.send(JSON.stringify({ answer }));
+    }
+  };
+</script>
